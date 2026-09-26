@@ -1,0 +1,397 @@
+import { Component, computed, signal } from '@angular/core';
+import {
+  CATEGORY_LABELS,
+  PROJECTS,
+  ProjectCategory,
+} from '../../core/models/project.model';
+import { RouterLink } from '@angular/router';
+import { ProjectCardComponent } from './project-card/project-card.component';
+
+type FilterValue = ProjectCategory | 'all';
+
+interface FilterChip {
+  value: FilterValue;
+  label: string;
+}
+
+@Component({
+  selector: 'app-projects',
+  standalone: true,
+  imports: [ProjectCardComponent, RouterLink],
+  template: `
+    <section id="projects" class="section archive">
+      <div class="container">
+        <!-- Case-study inserts: slim editorial strips above the masthead -->
+        <a class="case-study-strip" routerLink="/mcu">
+          <span class="strip-eyebrow">CHAPTER FOUR · NEW</span>
+          <span class="strip-claim">
+            A 2014 credit-union site, rebuilt for 2026.
+            <em>Drag to compare the rebuild</em>
+          </span>
+          <span class="strip-arrow">→</span>
+        </a>
+
+        <a class="case-study-strip" routerLink="/lonsdale">
+          <span class="strip-eyebrow">CHAPTER THREE</span>
+          <span class="strip-claim">
+            WordPress to Astro, agency to me.
+            <em>Drag to compare the cutover</em>
+          </span>
+          <span class="strip-arrow">→</span>
+        </a>
+
+        <a class="case-study-strip" routerLink="/one-week">
+          <span class="strip-eyebrow">CHAPTER TWO</span>
+          <span class="strip-claim">
+            Four products shipped in seven days.
+            <em>Read the case study</em>
+          </span>
+          <span class="strip-arrow">→</span>
+        </a>
+
+        <!-- Section masthead -->
+        <header class="masthead">
+          <div class="masthead-rule">
+            <span class="rule-tag">CHAPTER ONE</span>
+          </div>
+          <h2 class="archive-title">
+            <em>The</em> Archive
+          </h2>
+          <p class="archive-subtitle">
+            Ten entries. Each shipped, each studied.
+            <span class="mono">[ {{ filteredCount() }} of {{ totalCount }} listed ]</span>
+          </p>
+        </header>
+
+        <!-- Filter row -->
+        <nav class="filter-row" aria-label="Filter projects">
+          <span class="filter-label">FILTER BY DISCIPLINE</span>
+          <div class="filter-chips">
+            @for (chip of filterChips; track chip.value) {
+              <button
+                class="chip"
+                [class.chip--active]="activeFilter() === chip.value"
+                (click)="activeFilter.set(chip.value)"
+              >
+                {{ chip.label }}
+              </button>
+            }
+          </div>
+        </nav>
+
+        <!-- Project entries -->
+        <div class="entries">
+          @for (project of filteredProjects(); track project.id; let i = $index) {
+            <app-project-card
+              [project]="project"
+              [index]="i + 1"
+              [reversed]="i % 2 === 1"
+            />
+          }
+        </div>
+      </div>
+    </section>
+  `,
+  styles: [`
+    .archive {
+      background: var(--ink);
+      position: relative;
+    }
+
+    /* Case-study strip — printed-insert vibe, sits above the masthead */
+    .case-study-strip {
+      display: flex;
+      align-items: baseline;
+      gap: 1.25rem;
+      padding: 1.5rem 0;
+      margin-bottom: 4rem;
+      border-top: 1px solid var(--ember);
+      border-bottom: 1px solid var(--rule);
+      text-decoration: none;
+      transition: background 0.3s ease, padding-left 0.3s ease;
+      flex-wrap: wrap;
+    }
+
+    .case-study-strip:hover {
+      background: rgba(255, 107, 53, 0.04);
+      padding-left: 0.5rem;
+    }
+
+    .case-study-strip:hover .strip-arrow {
+      transform: translateX(4px);
+      color: var(--ember);
+    }
+
+    .strip-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: var(--ember);
+      white-space: nowrap;
+    }
+
+    .strip-claim {
+      flex: 1;
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--paper);
+      font-style: normal;
+      letter-spacing: -0.01em;
+      min-width: 280px;
+    }
+
+    .strip-claim em {
+      font-style: italic;
+      color: var(--ember);
+      margin-left: 0.5rem;
+    }
+
+    .strip-arrow {
+      font-family: var(--font-mono);
+      font-size: 1.2rem;
+      color: var(--brass);
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    @media (max-width: 640px) {
+      .case-study-strip {
+        gap: 0.5rem;
+        margin-bottom: 2.5rem;
+        padding: 1rem 0;
+      }
+      .strip-claim {
+        font-size: 1rem;
+      }
+      .strip-eyebrow {
+        font-size: 0.6rem;
+      }
+    }
+
+    /* Masthead */
+    .masthead {
+      margin-bottom: 5rem;
+      max-width: 780px;
+    }
+
+    .masthead-rule {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .masthead-rule::before {
+      content: '';
+      flex: 0 0 60px;
+      height: 1px;
+      background: var(--ember);
+    }
+
+    .masthead-rule::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
+    }
+
+    .rule-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: var(--brass);
+    }
+
+    .archive-title {
+      font-family: var(--font-display);
+      font-variation-settings: 'opsz' 144, 'WONK' 1;
+      font-size: clamp(3rem, 8vw, 6rem);
+      line-height: 0.95;
+      font-weight: 400;
+      color: var(--paper);
+      letter-spacing: -0.04em;
+      margin-bottom: 1.25rem;
+    }
+
+    .archive-title em {
+      font-style: italic;
+      font-weight: 200;
+      color: var(--text-mute);
+      font-size: 0.7em;
+      margin-right: 0.25rem;
+    }
+
+    .archive-subtitle {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .archive-subtitle .mono {
+      font-family: var(--font-mono);
+      font-style: normal;
+      font-size: 0.75rem;
+      color: var(--brass-mute);
+      margin-left: 0.75rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* Filter row */
+    .filter-row {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 5rem;
+      padding: 1.25rem 0;
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      flex-wrap: wrap;
+    }
+
+    .filter-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      color: var(--text-faint);
+      white-space: nowrap;
+    }
+
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .chip {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.5rem 1rem;
+      background: transparent;
+      color: var(--text-mute);
+      border: 1px solid var(--rule);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-weight: 500;
+    }
+
+    .chip:hover {
+      color: var(--ember);
+      border-color: var(--ember-deep);
+    }
+
+    .chip--active {
+      background: var(--ember);
+      color: var(--ink);
+      border-color: var(--ember);
+    }
+
+    /* Entries — generous but not overwhelming */
+    .entries {
+      display: flex;
+      flex-direction: column;
+      gap: 4.5rem;
+    }
+
+    .entries > app-project-card:not(:first-child) {
+      padding-top: 4.5rem;
+      border-top: 1px solid var(--rule);
+    }
+
+    /* Tighter spacing for side projects so they cluster and don't feel
+       weighty like flagship entries. */
+    .entries > app-project-card:has(.entry--side) {
+      padding-top: 2.75rem;
+    }
+
+    @media (max-width: 1024px) {
+      .entries {
+        gap: 3.5rem;
+      }
+      .entries > app-project-card:not(:first-child) {
+        padding-top: 3.5rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .section {
+        padding: 4rem 1rem;
+      }
+      .archive {
+        padding: 4rem 0;
+      }
+      .masthead {
+        margin-bottom: 2.5rem;
+      }
+      .archive-title {
+        font-size: clamp(2.25rem, 12vw, 3rem);
+      }
+      .archive-subtitle {
+        font-size: 1rem;
+      }
+      .archive-subtitle .mono {
+        display: block;
+        margin-left: 0;
+        margin-top: 0.5rem;
+      }
+      .masthead-rule::before {
+        flex: 0 0 30px;
+      }
+      .rule-tag {
+        font-size: 0.6rem;
+        letter-spacing: 0.2em;
+      }
+      .filter-row {
+        margin-bottom: 2.5rem;
+        gap: 1rem;
+        padding: 1rem 0;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .filter-label {
+        font-size: 0.6rem;
+      }
+      .chip {
+        font-size: 0.65rem;
+        padding: 0.4rem 0.75rem;
+        letter-spacing: 0.1em;
+      }
+      .entries {
+        gap: 3rem;
+      }
+      .entries > app-project-card:not(:first-child) {
+        padding-top: 3rem;
+      }
+    }
+  `],
+})
+export class ProjectsComponent {
+  readonly totalCount = PROJECTS.length;
+
+  /** Only show category chips that actually have at least one project. */
+  readonly filterChips: FilterChip[] = (() => {
+    const usedCategories = new Set(PROJECTS.map((p) => p.category));
+    return [
+      { value: 'all' as FilterValue, label: 'ALL' },
+      ...Object.entries(CATEGORY_LABELS)
+        .filter(([value]) => usedCategories.has(value as ProjectCategory))
+        .map(([value, label]) => ({
+          value: value as ProjectCategory,
+          label: label.toUpperCase(),
+        })),
+    ];
+  })();
+
+  activeFilter = signal<FilterValue>('all');
+
+  filteredProjects = computed(() => {
+    const filter = this.activeFilter();
+    return filter === 'all'
+      ? PROJECTS
+      : PROJECTS.filter((p) => p.category === filter);
+  });
+
+  filteredCount = computed(() => this.filteredProjects().length);
+}
