@@ -1,13 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
-interface ExperienceRole {
-  title: string;
-  company: string;
-  location: string;
-  period: string;
-  summary: string;
-}
-
 @Component({
   selector: 'app-experience',
   standalone: true,
@@ -23,8 +15,8 @@ interface ExperienceRole {
             <em>Work</em> Experience
           </h2>
           <p class="archive-subtitle">
-            Three chapters as a Staff Full Stack Engineer — building
-            AI-powered products across fintech and banking.
+            Thirteen years building search and data systems across
+            finance, telecom, and healthcare.
           </p>
         </header>
 
@@ -45,8 +37,6 @@ interface ExperienceRole {
                     </p>
                   </div>
                   <div class="role-meta">
-                    <span class="role-loc">{{ role.location }}</span>
-                    <span class="dot">·</span>
                     <span class="role-period">{{ role.period }}</span>
                   </div>
                 </header>
@@ -285,34 +275,45 @@ interface ExperienceRole {
   `,
 })
 export class ExperienceComponent {
-  readonly roles: ExperienceRole[] = [
+  roles = [
     {
-      title: 'Staff Full Stack Engineer · AI Products',
-      company: 'UBS',
-      location: 'Zurich, Switzerland',
-      period: 'Jun 2024 – Oct 2025',
+      title: 'Senior Search Architect',
+      company: 'PNC',
+      period: 'Oct 2023 – Present',
       summary:
-        'Led full-stack Java / React delivery on the wealth platform, embedding LLM-powered assistants and document intelligence into advisor workflows, and rolling the consolidated application out across Spain, Italy, and the UK.',
+        'Designs and runs OpenSearch clusters and search APIs across financial products — led the migration of search architecture to AWS, cut operational costs by 18%, and raised indexing speed by 35%.',
     },
     {
-      title: 'Staff Full Stack Engineer · AI Platform',
-      company: 'Credit Suisse',
-      location: 'Zurich, Switzerland',
-      period: 'Feb 2023 – Jun 2024',
+      title: 'Lead Software Engineer',
+      company: 'T-Mobile',
+      period: 'Jul 2022 – Sep 2023',
       summary:
-        'Owned the monolith-to-microservices migration end to end and built the AI service layer behind it — retrieval-augmented search, model-serving APIs, and Angular / Java interfaces for the wealth management team.',
+        'Led the Elasticsearch to OpenSearch upgrade, reducing query costs by 12%, improved relevance for customer support tools by 30%, and piloted LLM-based semantic search experiments.',
     },
     {
-      title: 'Staff Full Stack Engineer · Applied ML',
-      company: 'Backbase',
-      location: 'Cardiff, UK',
-      period: 'Jan 2019 – Aug 2020',
+      title: 'Search Technology Specialist',
+      company: 'UCSF Health',
+      period: 'Apr 2020 – Jun 2022',
       summary:
-        'Built the reusable micro frontend library used across banking clients and introduced ML-driven fraud and anomaly signals into the security layer — SMS OTP, device auth, and Keycloak — shipped to production across multiple institutions.',
+        'Overhauled Elasticsearch search for medical record systems, improving clinician data access speed by 20%, and launched indexing pipelines that cut data refresh times by 50%.',
+    },
+    {
+      title: 'Software Engineer',
+      company: 'Principal Financial Group',
+      period: 'Jan 2018 – Mar 2020',
+      summary:
+        'Engineered custom search for financial trading platforms, optimising index queries by 40%, and built fault-tolerant search architecture for peak trading hours.',
+    },
+    {
+      title: 'Junior Software Engineer',
+      company: 'Wissen Technology',
+      period: 'May 2013 – Oct 2015',
+      summary:
+        'Helped roll out Elasticsearch across new projects, built small-scale ETL pipelines, and improved search throughput by 15%.',
     },
   ];
 
-  pad(n: number): string {
+  pad(n) {
     return n.toString().padStart(2, '0');
   }
 }

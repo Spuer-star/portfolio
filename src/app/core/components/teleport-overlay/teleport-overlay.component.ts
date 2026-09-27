@@ -9,12 +9,8 @@ import {
   viewChild,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import {
-  GhostKind,
-  TeleportRequest,
-  TeleportService,
-} from '../../services/teleport.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import { TeleportService } from '../../services/teleport.service';
 
 /** Mooncake's special card: Queen of Hearts (filled crown + heart). */
 const QUEEN_OF_HEARTS_SVG = `
@@ -353,28 +349,28 @@ const QUEEN_OF_HEARTS_SVG = `
   `],
 })
 export class TeleportOverlayComponent {
-  private readonly platformId = inject(PLATFORM_ID);
-  private readonly teleport = inject(TeleportService);
-  private readonly sanitizer = inject(DomSanitizer);
-  private readonly isBrowser = isPlatformBrowser(this.platformId);
+  platformId = inject(PLATFORM_ID);
+  teleport = inject(TeleportService);
+  sanitizer = inject(DomSanitizer);
+  isBrowser = isPlatformBrowser(this.platformId);
 
-  readonly active = signal(false);
-  readonly numeral = signal('');
-  readonly accent = signal('var(--ember)');
-  readonly kind = signal<GhostKind>('face');
-  readonly title = signal('');
-  readonly iconSvg = signal<SafeHtml>('');
+  active = signal(false);
+  numeral = signal('');
+  accent = signal('var(--ember)');
+  kind = signal('face');
+  title = signal('');
+  iconSvg = signal(null);
   /** Suit symbol shown beneath the numeral; null for non-special cards. */
-  readonly cornerSuit = signal<string | null>(null);
+  cornerSuit = signal(null);
   /** True when the icon is the filled Queen of Hearts (Mooncake's card). */
-  readonly isQueen = signal(false);
+  isQueen = signal(false);
 
-  private readonly backdropRef = viewChild.required<ElementRef<HTMLElement>>('backdrop');
-  private readonly portalRef = viewChild.required<ElementRef<HTMLElement>>('portal');
-  private readonly ghostRef = viewChild.required<ElementRef<HTMLElement>>('ghost');
-  private readonly flashRef = viewChild.required<ElementRef<HTMLElement>>('flash');
+  backdropRef = viewChild.required('backdrop', { read: ElementRef });
+  portalRef = viewChild.required('portal', { read: ElementRef });
+  ghostRef = viewChild.required('ghost', { read: ElementRef });
+  flashRef = viewChild.required('flash', { read: ElementRef });
 
-  private busy = false;
+  busy = false;
 
   constructor() {
     effect(() => {
@@ -385,7 +381,7 @@ export class TeleportOverlayComponent {
     });
   }
 
-  private async runTeleport(req: TeleportRequest): Promise<void> {
+  async runTeleport(req) {
     this.busy = true;
 
     if (this.prefersReducedMotion()) {
@@ -512,34 +508,34 @@ export class TeleportOverlayComponent {
     this.busy = false;
   }
 
-  private scrollToTarget(req: TeleportRequest): void {
+  scrollToTarget(req) {
     const projects = document.getElementById('projects');
     if (!projects) return;
 
     const cards = projects.querySelectorAll('app-project-card');
     // The teleport request's projectIndex is the position in PROJECTS, which
     // matches the rendered card order one-to-one.
-    const target = cards[req.projectIndex] as HTMLElement | undefined;
+    const target = cards[req.projectIndex];
     if (!target) return;
 
     target.scrollIntoView({ behavior: 'auto', block: 'start' });
     // Re-trigger the impact glow even if it's already on (e.g. successive rolls).
     target.classList.remove('fate-glow');
     // Force reflow so the animation restarts.
-    void target.offsetWidth;
+    void target.getBoundingClientRect();
     target.classList.add('fate-glow');
     window.setTimeout(() => target.classList.remove('fate-glow'), 2600);
   }
 
-  private frame(): Promise<void> {
-    return new Promise((resolve) => requestAnimationFrame(() => resolve()));
+  frame() {
+    return new Promise((resolve) => requestAnimationFrame(resolve));
   }
 
-  private sleep(ms: number): Promise<void> {
+  sleep(ms) {
     return new Promise((resolve) => window.setTimeout(resolve, ms));
   }
 
-  private prefersReducedMotion(): boolean {
+  prefersReducedMotion() {
     return typeof window !== 'undefined'
       && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
   }

@@ -1,29 +1,3 @@
-export interface SprintEntry {
-  /** "MAY 01" — top-left date stamp on the card */
-  date: string;
-  /** "THU" — sub-line under the date */
-  weekday: string;
-  /** Optional sub-header sitting above grouped same-day cards (e.g. "THE BLITZ") */
-  chapter?: string;
-  /** ISO yyyy-mm-dd, used for ordering and machine readability */
-  isoDate: string;
-  title: string;
-  tagline: string;
-  /** Live site URL. Omit if the project has been decommissioned. */
-  liveUrl?: string;
-  repoUrl?: string;
-  /** anchor id of the matching entry in The Archive, if one exists */
-  archiveSlug?: string;
-  /** Path under src/assets — leave undefined to use a live Microlink screenshot */
-  staticPreview?: string;
-  /** Themed accent matching the archive entry where applicable */
-  accent: string;
-  /** Three to five short, factual bullets pulled from the commit log */
-  buildNotes: string[];
-  /** "11 commits · 17:26 → 21:50 UTC" */
-  windowSummary: string;
-}
-
 /**
  * Hand-curated, in chronological order.
  * Two cards share May 1 — they render under a single "THE BLITZ" sub-header.
@@ -34,16 +8,7 @@ export interface SprintEntry {
  */
 
 /** Lifetime / aggregate stats surfaced in the "Off the record" section. */
-export interface OffTheRecordRow {
-  /** Display name — may be redacted. */
-  name: string;
-  privacy: 'PUBLIC' | 'PRIVATE' | 'WORK · PRIVATE';
-  commits: number;
-  /** One-line context — what this repo is. */
-  blurb: string;
-}
-
-export const OFF_THE_RECORD: OffTheRecordRow[] = [
+export const OFF_THE_RECORD = [
   {
     name: 'coeymusa/What-is-your-concern',
     privacy: 'PUBLIC',
@@ -124,7 +89,7 @@ export const ZOOMED_OUT = {
    */
   weekMultiple: 5,
 };
-export const SPRINT_ENTRIES: SprintEntry[] = [
+export const SPRINT_ENTRIES = [
   {
     date: 'APR 28',
     weekday: 'TUE',

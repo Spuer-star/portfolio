@@ -2,18 +2,6 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-interface PagePair {
-  slug: string;
-  eyebrow: string;
-  title: string;
-  note: string;
-  wpUrl: string;
-  astroUrl: string;
-  wpShort: string;
-  astroShort: string;
-  wp: string;
-  astro: string;
-}
 
 @Component({
   selector: 'app-lonsdale',
@@ -895,12 +883,12 @@ interface PagePair {
 })
 export class LonsdaleComponent {
   // Per-pair split percentage, 0 = full WP, 100 = full Astro.
-  splits = signal<number[]>([50, 50, 50, 50, 50, 50]);
+  splits = signal([50, 50, 50, 50, 50, 50]);
 
-  private activeIdx: number | null = null;
-  private activeRect: DOMRect | null = null;
+  activeIdx = null;
+  activeRect = null;
 
-  pairs: PagePair[] = [
+  pairs = [
     {
       slug: 'home',
       eyebrow: '01 · HOMEPAGE',
@@ -1063,18 +1051,18 @@ export class LonsdaleComponent {
     { title: 'Vercel preview URL per branch', blurb: 'Every commit on a feature branch deploys to its own URL. Reviews aren\u2019t blocked on a staging environment that no one owns.' },
   ];
 
-  pad(n: number): string {
+  pad(n) {
     return n.toString().padStart(2, '0');
   }
 
-  afterClip(idx: number): string {
+  afterClip(idx) {
     const split = this.splits()[idx] ?? 50;
     return `inset(0 ${100 - split}% 0 0)`;
   }
 
-  onPointerDown(ev: MouseEvent | TouchEvent, idx: number) {
+  onPointerDown(ev, idx) {
     ev.preventDefault();
-    const slider = (ev.currentTarget as HTMLElement);
+    const slider = ev.currentTarget;
     this.activeIdx = idx;
     this.activeRect = slider.getBoundingClientRect();
     // Immediate jump-to-click
@@ -1087,18 +1075,18 @@ export class LonsdaleComponent {
     window.addEventListener('touchcancel', this.onPointerUp);
   }
 
-  private onPointerMove = (ev: MouseEvent | TouchEvent) => {
+  onPointerMove = (ev) => {
     if (this.activeIdx === null || !this.activeRect) return;
     // Need to re-fetch rect if scroll happened mid-drag — quick + cheap.
     const slider = document.querySelector(
       `.compare-slider[data-idx="${this.activeIdx}"]`
-    ) as HTMLElement | null;
+    );
     if (slider) this.activeRect = slider.getBoundingClientRect();
     ev.preventDefault();
     this.updateFromEvent(ev);
   };
 
-  private onPointerUp = () => {
+  onPointerUp = () => {
     this.activeIdx = null;
     this.activeRect = null;
     window.removeEventListener('mousemove', this.onPointerMove);
@@ -1108,7 +1096,7 @@ export class LonsdaleComponent {
     window.removeEventListener('touchcancel', this.onPointerUp);
   };
 
-  private updateFromEvent(ev: MouseEvent | TouchEvent) {
+  updateFromEvent(ev) {
     if (this.activeIdx === null || !this.activeRect) return;
     const clientX =
       ev instanceof MouseEvent

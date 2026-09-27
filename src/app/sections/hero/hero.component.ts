@@ -542,11 +542,11 @@ import { CardOracleComponent } from '../card-oracle/card-oracle.component';
   `],
 })
 export class HeroComponent {
-  scrollToProjects(): void {
+  scrollToProjects() {
     document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
   }
 
-  scrollToContact(event: Event): void {
+  scrollToContact(event) {
     event.preventDefault();
     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
   }

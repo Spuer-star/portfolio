@@ -7,8 +7,8 @@ import {
   signal,
   viewChildren,
 } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { PROJECTS, Project } from '../../core/models/project.model';
+import { DomSanitizer } from '@angular/platform-browser';
+import { PROJECTS } from '../../core/models/project.model';
 import { TeleportService } from '../../core/services/teleport.service';
 
 /** Filled (rather than stroked) heart-and-crown for Mooncake's card. */
@@ -759,43 +759,49 @@ const QUEEN_OF_HEARTS_SVG = `
   `],
 })
 export class CardOracleComponent {
-  private readonly teleport = inject(TeleportService);
-  private readonly sanitizer = inject(DomSanitizer);
+  teleport = inject(TeleportService);
+  sanitizer = inject(DomSanitizer);
 
-  readonly projects: Project[] = PROJECTS;
-  readonly romans = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+  projects = PROJECTS;
+  romans = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
 
   /** Pre-trusted SVG markup per project — computed once. */
-  readonly iconSvgs: SafeHtml[];
+  iconSvgs = this.projects.map((p) =>
+    this.sanitizer.bypassSecurityTrustHtml(
+      p.id === 'mooncake'
+        ? QUEEN_OF_HEARTS_SVG
+        : `<svg viewBox="0 0 24 24">${p.icon}</svg>`,
+    ),
+  );
   /** Corner labels: roman numeral by default; Q♥ for Mooncake. */
-  readonly cornerLabels: { label: string; suit: string | null }[];
+  cornerLabels = this.projects.map((p, i) =>
+    p.id === 'mooncake'
+      ? { label: 'Q', suit: '♥' }
+      : { label: this.romans[i], suit: null },
+  );
 
-  readonly expanded = signal(false);
-  readonly expandedVisible = signal(false);
+  expanded = signal(false);
+  expandedVisible = signal(false);
 
-  readonly phase = signal<'idle' | 'shuffling' | 'selecting' | 'drawing' | 'revealed'>('idle');
-  readonly drawnIndex = signal(-1);
-  readonly draggingIdx = signal(-1);
-  readonly dispatched = signal(false);
+  /** 'idle' | 'shuffling' | 'selecting' | 'drawing' | 'revealed' */
+  phase = signal('idle');
+  drawnIndex = signal(-1);
+  draggingIdx = signal(-1);
+  dispatched = signal(false);
 
-  private readonly cardsRef = viewChildren<ElementRef<HTMLElement>>('card');
+  cardsRef = viewChildren('card', { read: ElementRef });
 
   /** Final fan transforms per card — used to anchor the drag delta. */
-  private fanTransforms: string[] = [];
+  fanTransforms = [];
 
-  /** Active drag state, or null when nothing is being dragged. */
-  private dragState: {
-    cardIdx: number;
-    startX: number;
-    startY: number;
-    pointerId: number;
-  } | null = null;
+  /** Active drag state { cardIdx, startX, startY, pointerId }, or null when nothing is being dragged. */
+  dragState = null;
 
-  readonly isDrawingOrRevealed = computed(
+  isDrawingOrRevealed = computed(
     () => this.phase() === 'drawing' || this.phase() === 'revealed',
   );
 
-  readonly ctaLabel = computed(() => {
+  ctaLabel = computed(() => {
     if (this.dispatched()) return 'summoning';
     switch (this.phase()) {
       case 'idle':       return 'cut the deck';
@@ -806,7 +812,7 @@ export class CardOracleComponent {
     }
   });
 
-  readonly stateLabel = computed(() => {
+  stateLabel = computed(() => {
     if (this.dispatched()) return 'fate dispatched';
     const idx = this.drawnIndex();
     switch (this.phase()) {
@@ -819,42 +825,27 @@ export class CardOracleComponent {
     }
   });
 
-  constructor() {
-    this.iconSvgs = this.projects.map((p) =>
-      this.sanitizer.bypassSecurityTrustHtml(
-        p.id === 'mooncake'
-          ? QUEEN_OF_HEARTS_SVG
-          : `<svg viewBox="0 0 24 24">${p.icon}</svg>`,
-      ),
-    );
-    this.cornerLabels = this.projects.map((p, i) =>
-      p.id === 'mooncake'
-        ? { label: 'Q', suit: '♥' }
-        : { label: this.romans[i], suit: null },
-    );
-  }
-
   // ============== expand / collapse ==============
 
-  expand(): void {
+  expand() {
     if (this.expanded() || this.dispatched()) return;
     this.expanded.set(true);
     requestAnimationFrame(() => this.expandedVisible.set(true));
   }
 
   /** Tap on the deck (idle phase) — equivalent to clicking "cut the deck". */
-  onDeckClick(): void {
+  onDeckClick() {
     if (this.phase() === 'idle' && !this.dispatched()) {
       void this.shuffle();
     }
   }
 
-  onBackdropClick(): void {
+  onBackdropClick() {
     // Only allow backdrop dismiss when the user hasn't started anything yet.
     if (this.phase() === 'idle' && !this.dispatched()) this.collapse();
   }
 
-  collapse(): void {
+  collapse() {
     if (this.dispatched()) return;
     this.expandedVisible.set(false);
     window.setTimeout(() => {
@@ -868,7 +859,7 @@ export class CardOracleComponent {
 
   // ============== shuffle (fan + riffle, ends in 'selecting') ==============
 
-  async shuffle(): Promise<void> {
+  async shuffle() {
     if (this.phase() !== 'idle') return;
 
     const cards = this.cardsRef().map((r) => r.nativeElement);
@@ -889,7 +880,7 @@ export class CardOracleComponent {
     this.phase.set('selecting');
   }
 
-  async reshuffle(): Promise<void> {
+  async reshuffle() {
     if (this.phase() !== 'selecting') return;
     const cards = this.cardsRef().map((r) => r.nativeElement);
     this.phase.set('shuffling');
@@ -917,10 +908,10 @@ export class CardOracleComponent {
 
   // ============== drag interaction ==============
 
-  onCardPointerDown(e: PointerEvent, i: number): void {
+  onCardPointerDown(e, i) {
     if (this.phase() !== 'selecting' || this.dragState) return;
     e.preventDefault();
-    const card = e.currentTarget as HTMLElement;
+    const card = e.currentTarget;
     card.setPointerCapture(e.pointerId);
 
     // Cancel any in-flight WAA so style.transform takes effect.
@@ -936,9 +927,9 @@ export class CardOracleComponent {
     this.draggingIdx.set(i);
   }
 
-  onCardPointerMove(e: PointerEvent, i: number): void {
+  onCardPointerMove(e, i) {
     if (!this.dragState || this.dragState.cardIdx !== i) return;
-    const card = e.currentTarget as HTMLElement;
+    const card = e.currentTarget;
     const dx = e.clientX - this.dragState.startX;
     const dy = e.clientY - this.dragState.startY;
     // Drag translate is the OUTERMOST transform (leftmost in the list)
@@ -948,9 +939,9 @@ export class CardOracleComponent {
       `translate3d(${dx}px, ${dy}px, ${80 + lift}px) ${this.fanTransforms[i]}`;
   }
 
-  onCardPointerUp(e: PointerEvent, i: number): void {
+  onCardPointerUp(e, i) {
     if (!this.dragState || this.dragState.cardIdx !== i) return;
-    const card = e.currentTarget as HTMLElement;
+    const card = e.currentTarget;
 
     if (card.hasPointerCapture(e.pointerId)) {
       card.releasePointerCapture(e.pointerId);
@@ -967,7 +958,7 @@ export class CardOracleComponent {
     void this.commitDraw(i, card);
   }
 
-  private async commitDraw(i: number, card: HTMLElement): Promise<void> {
+  async commitDraw(i, card) {
     this.drawnIndex.set(i);
     this.phase.set('drawing');
 
@@ -999,7 +990,7 @@ export class CardOracleComponent {
 
   // ============== animation phases ==============
 
-  private computeFanTransforms(n: number): string[] {
+  computeFanTransforms(n) {
     // Scale the fan to the viewport so it doesn't clip on phones / tablets.
     const w = typeof window !== 'undefined' ? window.innerWidth : 1280;
     const isMobile = w < 640;
@@ -1045,7 +1036,7 @@ export class CardOracleComponent {
     return assignment.map((slot) => slotTransforms[slot]);
   }
 
-  private async fanOut(cards: HTMLElement[]): Promise<void> {
+  async fanOut(cards) {
     this.fanTransforms = this.computeFanTransforms(cards.length);
     const tasks = cards.map((card, i) =>
       card.animate(
@@ -1064,9 +1055,9 @@ export class CardOracleComponent {
     await Promise.all(tasks);
   }
 
-  private async riffle(cards: HTMLElement[]): Promise<void> {
+  async riffle(cards) {
     const N = cards.length;
-    const positionAt = (i: number) => this.fanTransforms[i];
+    const positionAt = (i) => this.fanTransforms[i];
 
     for (let pass = 0; pass < 2; pass++) {
       const swapTasks = cards.map((card, i) => {
@@ -1102,7 +1093,7 @@ export class CardOracleComponent {
   }
 
   /** Defensive — make sure every card is exactly at its fan transform. */
-  private async settleToFan(cards: HTMLElement[]): Promise<void> {
+  async settleToFan(cards) {
     const tasks = cards.map((card, i) =>
       card.animate(
         [{}, { transform: this.fanTransforms[i], offset: 1 }],
@@ -1114,7 +1105,7 @@ export class CardOracleComponent {
 
   // ============== handoff ==============
 
-  private dispatchTeleport(pickIdx: number, card: HTMLElement): void {
+  dispatchTeleport(pickIdx, card) {
     const project = this.projects[pickIdx];
     this.dispatched.set(true);
 
@@ -1147,7 +1138,7 @@ export class CardOracleComponent {
 
   // ============== helpers ==============
 
-  private resetCards(): void {
+  resetCards() {
     const cards = this.cardsRef().map((r) => r.nativeElement);
     cards.forEach((c) => {
       c.getAnimations().forEach((a) => a.cancel());
@@ -1156,18 +1147,18 @@ export class CardOracleComponent {
     this.fanTransforms = [];
   }
 
-  private deckPose(i: number): Keyframe {
+  deckPose(i) {
     return {
       transform: `translate3d(${i * 1.5}px, ${i * -1.5}px, ${i * 1}px) rotate(${i * 0.4}deg)`,
       offset: 0,
     };
   }
 
-  private sleep(ms: number): Promise<void> {
+  sleep(ms) {
     return new Promise((resolve) => window.setTimeout(resolve, ms));
   }
 
-  private prefersReducedMotion(): boolean {
+  prefersReducedMotion() {
     return typeof window !== 'undefined'
       && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
   }

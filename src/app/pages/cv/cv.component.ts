@@ -790,11 +790,11 @@ import { RouterLink } from '@angular/router';
   `,
 })
 export class CvComponent {
-  pad(n: number): string {
+  pad(n) {
     return n.toString().padStart(2, '0');
   }
 
-  readonly roles = [
+  roles = [
     {
       title: 'Associate Director',
       company: 'UBS',
@@ -872,7 +872,7 @@ export class CvComponent {
     },
   ];
 
-  readonly languages = [
+  languages = [
     { name: 'English', level: 'Native' },
   ];
 }

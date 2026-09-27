@@ -2,8 +2,6 @@ import {
   Component,
   signal,
   inject,
-  AfterViewInit,
-  OnDestroy,
   ChangeDetectionStrategy,
   PLATFORM_ID,
 } from '@angular/core';
@@ -345,13 +343,13 @@ import { Router, RouterLink } from '@angular/router';
     }
   `,
 })
-export class NavComponent implements AfterViewInit, OnDestroy {
-  private router = inject(Router);
-  private platformId = inject(PLATFORM_ID);
-  readonly activeSection = signal<string>('hero');
-  readonly menuOpen = signal(false);
+export class NavComponent {
+  router = inject(Router);
+  platformId = inject(PLATFORM_ID);
+  activeSection = signal('hero');
+  menuOpen = signal(false);
 
-  readonly navLinks = [
+  navLinks = [
     { id: 'projects', label: 'Archive' },
     { id: 'experience', label: 'Experience' },
     { id: 'skills', label: 'Skills' },
@@ -359,19 +357,19 @@ export class NavComponent implements AfterViewInit, OnDestroy {
     { id: 'contact', label: 'Contact' },
   ];
 
-  private observer: IntersectionObserver | null = null;
+  observer = null;
 
-  pad(n: number): string {
+  pad(n) {
     return n.toString().padStart(2, '0');
   }
 
   /** Debounce so the pointerup + click pair doesn't toggle twice. */
-  private lastTap = 0;
+  lastTap = 0;
 
   /** Bound to both (pointerup) and (click) on the hamburger. Whichever
    *  fires first wins; the other is debounced. Some mobile WebViews stall
    *  click events but always deliver pointerup, so we need the redundancy. */
-  onHamburgerTap(event: Event): void {
+  onHamburgerTap(event) {
     const now =
       typeof performance !== 'undefined' ? performance.now() : Date.now();
     if (now - this.lastTap < 300) return;
@@ -380,19 +378,19 @@ export class NavComponent implements AfterViewInit, OnDestroy {
     this.menuOpen.set(!this.menuOpen());
   }
 
-  toggleMenu(): void {
+  toggleMenu() {
     this.menuOpen.set(!this.menuOpen());
   }
 
-  closeMenu(): void {
+  closeMenu() {
     this.menuOpen.set(false);
   }
 
-  scrollToTop(): void {
+  scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  scrollTo(id: string): void {
+  scrollTo(id) {
     if (this.router.url !== '/') {
       this.router.navigate(['/']).then(() => {
         setTimeout(() => {
@@ -404,7 +402,7 @@ export class NavComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  ngAfterViewInit(): void {
+  ngAfterViewInit() {
     if (!isPlatformBrowser(this.platformId)) return;
 
     const sectionIds = ['hero', 'projects', 'experience', 'skills', 'about', 'contact'];
@@ -428,7 +426,7 @@ export class NavComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.observer?.disconnect();
   }
 }

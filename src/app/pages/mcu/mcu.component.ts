@@ -2,18 +2,6 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-interface PagePair {
-  slug: string;
-  eyebrow: string;
-  title: string;
-  note: string;
-  oldUrl: string;
-  newUrl: string;
-  oldShort: string;
-  newShort: string;
-  before: string;
-  after: string;
-}
 
 @Component({
   selector: 'app-mcu',
@@ -630,12 +618,12 @@ interface PagePair {
   `],
 })
 export class McuComponent {
-  splits = signal<number[]>([50, 50, 50, 50, 50, 50]);
+  splits = signal([50, 50, 50, 50, 50, 50]);
 
-  private activeIdx: number | null = null;
-  private activeRect: DOMRect | null = null;
+  activeIdx = null;
+  activeRect = null;
 
-  pairs: PagePair[] = [
+  pairs = [
     {
       slug: 'home',
       eyebrow: '01 · HOMEPAGE',
@@ -737,18 +725,18 @@ export class McuComponent {
     { title: 'Sign-in routed to the existing portal', blurb: 'No fake login form &mdash; the auth/portal stays where it already lives.' },
   ];
 
-  pad(n: number): string {
+  pad(n) {
     return n.toString().padStart(2, '0');
   }
 
-  afterClip(idx: number): string {
+  afterClip(idx) {
     const split = this.splits()[idx] ?? 50;
     return `inset(0 ${100 - split}% 0 0)`;
   }
 
-  onPointerDown(ev: MouseEvent | TouchEvent, idx: number) {
+  onPointerDown(ev, idx) {
     ev.preventDefault();
-    const slider = (ev.currentTarget as HTMLElement);
+    const slider = ev.currentTarget;
     this.activeIdx = idx;
     this.activeRect = slider.getBoundingClientRect();
     this.updateFromEvent(ev);
@@ -759,17 +747,17 @@ export class McuComponent {
     window.addEventListener('touchcancel', this.onPointerUp);
   }
 
-  private onPointerMove = (ev: MouseEvent | TouchEvent) => {
+  onPointerMove = (ev) => {
     if (this.activeIdx === null || !this.activeRect) return;
     const slider = document.querySelector(
       `.compare-slider[data-idx="${this.activeIdx}"]`
-    ) as HTMLElement | null;
+    );
     if (slider) this.activeRect = slider.getBoundingClientRect();
     ev.preventDefault();
     this.updateFromEvent(ev);
   };
 
-  private onPointerUp = () => {
+  onPointerUp = () => {
     this.activeIdx = null;
     this.activeRect = null;
     window.removeEventListener('mousemove', this.onPointerMove);
@@ -779,7 +767,7 @@ export class McuComponent {
     window.removeEventListener('touchcancel', this.onPointerUp);
   };
 
-  private updateFromEvent(ev: MouseEvent | TouchEvent) {
+  updateFromEvent(ev) {
     if (this.activeIdx === null || !this.activeRect) return;
     const clientX =
       ev instanceof MouseEvent

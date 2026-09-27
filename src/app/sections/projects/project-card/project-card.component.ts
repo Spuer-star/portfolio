@@ -1,14 +1,13 @@
 import {
   Component,
-  Inject,
-  OnInit,
   PLATFORM_ID,
   computed,
+  inject,
   input,
   signal,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Project, previewUrl } from '../../../core/models/project.model';
+import { previewUrl } from '../../../core/models/project.model';
 
 @Component({
   selector: 'app-project-card',
@@ -398,24 +397,20 @@ import { Project, previewUrl } from '../../../core/models/project.model';
   `,
   styleUrl: './project-card.component.scss',
 })
-export class ProjectCardComponent implements OnInit {
-  project = input.required<Project>();
-  index = input<number>(0);
-  reversed = input<boolean>(false);
+export class ProjectCardComponent {
+  project = input(null);
+  index = input(0);
+  reversed = input(false);
 
   /** Current preview src — starts with the static asset, upgrades to live Microlink when loaded */
-  currentPreview = signal<string | null>(null);
+  currentPreview = signal(null);
   livePreviewLoaded = signal(false);
 
   preview = computed(() => this.currentPreview());
 
-  private readonly isBrowser: boolean;
+  isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
-  constructor(@Inject(PLATFORM_ID) platformId: object) {
-    this.isBrowser = isPlatformBrowser(platformId);
-  }
-
-  ngOnInit(): void {
+  ngOnInit() {
     const p = this.project();
 
     // Polaroid renders when EITHER a staticPreview is provided OR there is
@@ -451,15 +446,15 @@ export class ProjectCardComponent implements OnInit {
     }
   }
 
-  paddedIndex(): string {
+  paddedIndex() {
     return this.index().toString().padStart(2, '0');
   }
 
-  pad(n: number): string {
+  pad(n) {
     return n.toString().padStart(2, '0');
   }
 
-  shortUrl(): string {
+  shortUrl() {
     const url = this.project().liveUrl;
     if (!url) return '';
     try {
@@ -470,7 +465,7 @@ export class ProjectCardComponent implements OnInit {
     }
   }
 
-  shortRepo(): string {
+  shortRepo() {
     const url = this.project().repoUrl;
     if (!url) return '';
     try {
@@ -483,13 +478,13 @@ export class ProjectCardComponent implements OnInit {
     }
   }
 
-  specimenStr(key: string): string {
+  specimenStr(key) {
     const v = this.project().specimen.data[key];
     return v != null ? String(v) : '';
   }
 
-  getCategoryLabel(): string {
-    const labels: Record<string, string> = {
+  getCategoryLabel() {
+    const labels = {
       'saas': 'SAAS',
       'platform': 'PLATFORM',
       'enterprise': 'ENTERPRISE',

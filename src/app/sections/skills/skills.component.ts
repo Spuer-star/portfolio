@@ -1,11 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
-interface Skill {
-  name: string;
-  level: string;
-  rate: number;
-}
-
 @Component({
   selector: 'app-skills',
   standalone: true,
@@ -26,30 +20,44 @@ interface Skill {
           </p>
         </header>
 
-        <ul class="skill-list">
-          @for (skill of skills; track skill.name; let i = $index) {
-            <li class="skill-row">
-              <span class="skill-num">{{ pad(i + 1) }}</span>
-              <div class="skill-main">
-                <span class="skill-name">{{ skill.name }}</span>
-                <span class="skill-level">{{ skill.level }}</span>
-              </div>
-              <div
-                class="skill-stars"
-                [attr.aria-label]="skill.rate + ' out of 5 stars'"
-              >
-                @for (star of starSlots; track $index) {
-                  <span
-                    class="star"
-                    [class.star--filled]="$index < skill.rate"
-                    aria-hidden="true"
-                  >★</span>
-                }
-                <span class="star-count">{{ skill.rate }}/5</span>
-              </div>
-            </li>
-          }
-        </ul>
+        @for (group of groups; track group.name) {
+          <div class="skill-group">
+            <h3 class="group-head">{{ group.name }}</h3>
+            <ul class="skill-list">
+              @for (skill of group.skills; track skill.name; let i = $index) {
+                <li class="skill-row">
+                  <span class="skill-num">{{ pad(i + 1) }}</span>
+                  <div class="skill-main">
+                    <span class="skill-name">{{ skill.name }}</span>
+                    <span class="skill-level">{{ skill.level }}</span>
+                  </div>
+                  <div
+                    class="skill-stars"
+                    [attr.aria-label]="skill.rate + ' out of 5 stars'"
+                  >
+                    @for (star of starSlots; track $index) {
+                      <span
+                        class="star"
+                        [class.star--filled]="$index < skill.rate"
+                        aria-hidden="true"
+                      >★</span>
+                    }
+                    <span class="star-count">{{ skill.rate }}/5</span>
+                  </div>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+
+        <div class="skill-group">
+          <h3 class="group-head">Soft Skills</h3>
+          <ul class="soft-list">
+            @for (skill of softSkills; track skill) {
+              <li class="soft-tag">{{ skill }}</li>
+            }
+          </ul>
+        </div>
       </div>
     </section>
   `,
@@ -122,9 +130,47 @@ interface Skill {
       line-height: 1.7;
     }
 
+    .skill-group {
+      margin-bottom: 3.5rem;
+    }
+
+    .skill-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .group-head {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--brass);
+      margin-bottom: 1rem;
+    }
+
     .skill-list {
       list-style: none;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 3rem;
       border-top: 1px solid var(--rule);
+    }
+
+    .soft-list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--rule);
+    }
+
+    .soft-tag {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      color: var(--paper);
+      border: 1px solid var(--rule-light);
+      padding: 0.45rem 1rem;
     }
 
     .skill-row {
@@ -204,6 +250,12 @@ interface Skill {
       min-width: 2.5rem;
     }
 
+    @media (max-width: 900px) {
+      .skill-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
     @media (max-width: 700px) {
       .masthead {
         margin-bottom: 3rem;
@@ -253,20 +305,76 @@ interface Skill {
   `,
 })
 export class SkillsComponent {
-  readonly starSlots = [1, 2, 3, 4, 5];
+  starSlots = [1, 2, 3, 4, 5];
 
-  readonly skills: Skill[] = [
-    { name: 'Angular', level: 'Expert', rate: 5 },
-    { name: 'TypeScript', level: 'Expert', rate: 5 },
-    { name: 'Java / Spring Boot', level: 'Expert', rate: 5 },
-    { name: 'React', level: 'Advanced', rate: 4 },
-    { name: 'PostgreSQL', level: 'Advanced', rate: 4 },
-    { name: 'Node.js', level: 'Advanced', rate: 4 },
-    { name: 'AWS / Cloud', level: 'Proficient', rate: 3 },
-    { name: 'Python / ML', level: 'Proficient', rate: 3 },
+  groups = [
+    {
+      name: 'Programming Languages',
+      skills: [
+        { name: 'Python', level: 'Expert', rate: 5 },
+        { name: 'JavaScript', level: 'Advanced', rate: 4 },
+        { name: 'Java', level: 'Expert', rate: 5 },
+        { name: 'C++', level: 'Proficient', rate: 3 },
+        { name: 'Ruby', level: 'Proficient', rate: 3 },
+        { name: 'SQL', level: 'Expert', rate: 5 },
+      ],
+    },
+    {
+      name: 'Frameworks & Libraries',
+      skills: [
+        { name: 'React', level: 'Advanced', rate: 4 },
+        { name: 'Next.js', level: 'Advanced', rate: 4 },
+        { name: 'GraphQL', level: 'Advanced', rate: 4 },
+        { name: 'Elasticsearch', level: 'Expert', rate: 5 },
+        { name: 'OpenSearch', level: 'Expert', rate: 5 },
+        { name: 'TensorFlow', level: 'Proficient', rate: 3 },
+      ],
+    },
+    {
+      name: 'Cloud & DevOps',
+      skills: [
+        { name: 'AWS', level: 'Expert', rate: 5 },
+        { name: 'Docker', level: 'Expert', rate: 5 },
+        { name: 'Kubernetes', level: 'Expert', rate: 5 },
+        { name: 'Jenkins', level: 'Advanced', rate: 4 },
+        { name: 'Git CI/CD', level: 'Advanced', rate: 4 },
+        { name: 'Linux', level: 'Advanced', rate: 4 },
+      ],
+    },
+    {
+      name: 'Databases & Data Technologies',
+      skills: [
+        { name: 'PostgreSQL', level: 'Expert', rate: 5 },
+        { name: 'MySQL', level: 'Advanced', rate: 4 },
+        { name: 'Neo4j', level: 'Proficient', rate: 3 },
+        { name: 'MongoDB', level: 'Advanced', rate: 4 },
+        { name: 'Apache Kafka', level: 'Advanced', rate: 4 },
+        { name: 'Redis', level: 'Advanced', rate: 4 },
+      ],
+    },
+    {
+      name: 'Tools & Platforms',
+      skills: [
+        { name: 'Claude Code', level: 'Advanced', rate: 4 },
+        { name: 'OpenSearch Dashboards', level: 'Expert', rate: 5 },
+        { name: 'Custom Relevance Tooling', level: 'Expert', rate: 5 },
+        { name: 'Search Analytics', level: 'Expert', rate: 5 },
+        { name: 'Index Management', level: 'Expert', rate: 5 },
+        { name: 'Observability', level: 'Advanced', rate: 4 },
+      ],
+    },
   ];
 
-  pad(n: number): string {
+  softSkills = [
+    'Cross-functional collaboration',
+    'Stakeholder communication',
+    'Technical mentorship',
+    'Problem-solving',
+    'Adaptability',
+    'Resourcefulness',
+  ];
+
+  pad(n) {
     return n.toString().padStart(2, '0');
   }
 }

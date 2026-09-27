@@ -1,13 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
-interface ContactLink {
-  label: string;
-  url: string;
-  urlText: string;
-  channel: string;
-  icon: string;
-}
-
 @Component({
   selector: 'app-contact',
   standalone: true,
@@ -318,7 +310,7 @@ interface ContactLink {
   `,
 })
 export class ContactComponent {
-  readonly links: ContactLink[] = [
+  links = [
     {
       channel: 'DIRECT · FASTEST',
       label: 'Email',
@@ -335,7 +327,7 @@ export class ContactComponent {
     },
   ];
 
-  pad(n: number): string {
+  pad(n) {
     return n.toString().padStart(2, '0');
   }
 }

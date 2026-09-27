@@ -1,36 +1,8 @@
-export interface Project {
-  id: string;
-  title: string;
-  tagline: string;
-  description: string;
-  techStack: TechItem[];
-  features: string[];
-  liveUrl?: string;
-  category: ProjectCategory;
-  gradient: string;
-  icon: string; // SVG path content
-  theme: ProjectTheme;
-  accent: string; // Themed accent color overriding --ember
-  specimen: ProjectSpecimen;
-  /** Caption shown beneath the polaroid screenshot */
-  previewCaption?: string;
-  /** Local static screenshot path — shown immediately, then upgraded to live */
-  staticPreview?: string;
-  /** Skip the themed specimen device — useful when the polaroid screenshot already carries the visual */
-  hideSpecimen?: boolean;
-  /** Public source-code URL — surfaced as a quiet "open source" link in the card footer */
-  repoUrl?: string;
-  /** Visual hierarchy. 'flagship' = full-size archive entry (default). 'side' = compact card,
-   *  reserved for weekend-build experiments and small utilities so they don't compete with
-   *  the main apps for attention. */
-  tier?: 'flagship' | 'side';
-}
-
 /** Builds a screenshot URL for any live site via Microlink (free tier, no auth).
  *  waitForTimeout is critical for JS-heavy SPAs — without it Microlink screenshots
  *  the empty shell before client-side rendering completes.
  */
-export function previewUrl(liveUrl: string | undefined): string | null {
+export function previewUrl(liveUrl) {
   if (!liveUrl) return null;
   const encoded = encodeURIComponent(liveUrl);
   return (
@@ -42,7 +14,7 @@ export function previewUrl(liveUrl: string | undefined): string | null {
 }
 
 /** For projects without a liveUrl, returns a themed inline SVG mockup as a data URL. */
-export function fallbackPreview(project: { theme: ProjectTheme; accent: string; title: string }): string {
+export function fallbackPreview(project) {
   const accent = project.accent;
   const w = 1280;
   const h = 853;
@@ -126,32 +98,7 @@ export function fallbackPreview(project: { theme: ProjectTheme; accent: string; 
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
-export type ProjectTheme =
-  | 'ai-chat'
-  | 'compliance'
-  | 'fintech-ledger'
-  | 'sports-card'
-  | 'enterprise-gantt'
-  | 'cv-frame'
-  | 'mobile-chat'
-  | 'service-stamp'
-  | 'cockpit-ops'
-  | 'global-atlas';
-
-export interface ProjectSpecimen {
-  kind: ProjectTheme;
-  // Free-form structured data per kind, rendered by the card
-  data: Record<string, string | number | boolean>;
-}
-
-export interface TechItem {
-  name: string;
-  category: 'frontend' | 'backend' | 'database' | 'infra' | 'api' | 'ml';
-}
-
-export type ProjectCategory = 'saas' | 'platform' | 'enterprise' | 'consultancy' | 'ml' | 'service';
-
-export const CATEGORY_LABELS: Record<ProjectCategory, string> = {
+export const CATEGORY_LABELS = {
   saas: 'SaaS',
   platform: 'Platform',
   enterprise: 'Enterprise',
@@ -160,7 +107,7 @@ export const CATEGORY_LABELS: Record<ProjectCategory, string> = {
   service: 'Service',
 };
 
-export const PROJECTS: Project[] = [
+export const PROJECTS = [
   {
     id: 'promptmysite',
     title: 'PromptMySite',

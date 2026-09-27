@@ -7,7 +7,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { PROJECTS, Project } from '../../../core/models/project.model';
+import { PROJECTS } from '../../../core/models/project.model';
 import { TeleportService } from '../../../core/services/teleport.service';
 
 @Component({
@@ -341,32 +341,32 @@ import { TeleportService } from '../../../core/services/teleport.service';
   `],
 })
 export class DiceRollerComponent {
-  private readonly teleport = inject(TeleportService);
+  teleport = inject(TeleportService);
 
-  readonly projects: Project[] = PROJECTS;
-  private readonly numerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+  projects = PROJECTS;
+  numerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
 
-  readonly rolling = signal(false);
-  readonly result = signal<Project | null>(null);
+  rolling = signal(false);
+  result = signal(null);
   /** Face numeral the dice settled on (1–8); 0 when no roll yet / mid-roll. */
-  readonly landedFace = signal(0);
+  landedFace = signal(0);
   /** True from the moment we hand off to the teleport overlay until it ends. */
-  readonly teleporting = signal(false);
+  teleporting = signal(false);
 
-  readonly rotX = signal(-22);
-  readonly rotY = signal(32);
-  readonly rotZ = signal(0);
+  rotX = signal(-22);
+  rotY = signal(32);
+  rotZ = signal(0);
 
-  private readonly diceButtonRef = viewChild<ElementRef<HTMLButtonElement>>('diceButton');
-  private readonly diceElRef = viewChild<ElementRef<HTMLElement>>('diceEl');
+  diceButtonRef = viewChild('diceButton', { read: ElementRef });
+  diceElRef = viewChild('diceEl', { read: ElementRef });
 
   /** Pending auto-summon timer; cleared if the user re-rolls or summons manually. */
-  private autoSummonTimer: number | null = null;
+  autoSummonTimer = null;
 
   /** Dramatic pause between dice settling and the teleport firing. */
-  private static readonly AUTO_SUMMON_PAUSE_MS = 1200;
+  static AUTO_SUMMON_PAUSE_MS = 1200;
   /** Total runtime of the teleport cinematic (in TeleportOverlayComponent). */
-  private static readonly TELEPORT_DURATION_MS = 4700;
+  static TELEPORT_DURATION_MS = 4700;
 
   /**
    * Per-face settling Euler angles (degrees). Applying
@@ -384,7 +384,7 @@ export class DiceRollerComponent {
    * (Applied as: transform: rotateY(β) rotateZ(α), which CSS evaluates
    *  right-to-left — rotateZ first, then rotateY.)
    */
-  private readonly settles = [
+  settles = [
     { ry:  -54.74, rz:   45 }, // F1  top, +X +Z
     { ry:  -54.74, rz:  135 }, // F2  top, −X +Z
     { ry: -125.26, rz:  135 }, // F3  top, −X −Z
@@ -401,7 +401,7 @@ export class DiceRollerComponent {
     return PROJECTS.findIndex((p) => p.id === r.id) + 1;
   });
 
-  roll(): void {
+  roll() {
     if (this.rolling() || this.teleporting()) return;
     // Cancel any pending auto-summon from a previous roll.
     this.cancelAutoSummon();
@@ -471,12 +471,12 @@ export class DiceRollerComponent {
     }, 1700);
   }
 
-  private prefersReducedMotion(): boolean {
+  prefersReducedMotion() {
     return typeof window !== 'undefined'
       && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
   }
 
-  private cancelAutoSummon(): void {
+  cancelAutoSummon() {
     if (this.autoSummonTimer !== null) {
       window.clearTimeout(this.autoSummonTimer);
       this.autoSummonTimer = null;
@@ -487,13 +487,13 @@ export class DiceRollerComponent {
    * Smallest angle ≥ currentDeg + minTurns·360 that is ≡ targetMod360 (mod 360).
    * Lets us animate at least N full turns and finish on a precise target.
    */
-  private nextEquivalent(currentDeg: number, targetMod360: number, minTurns: number): number {
+  nextEquivalent(currentDeg, targetMod360, minTurns) {
     const minFinal = currentDeg + minTurns * 360;
     const k = Math.ceil((minFinal - targetMod360) / 360);
     return targetMod360 + k * 360;
   }
 
-  jumpToResult(): void {
+  jumpToResult() {
     if (this.teleporting()) return;
 
     const picked = this.result();

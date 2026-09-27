@@ -1,9 +1,8 @@
 import {
   Component,
-  Inject,
-  OnInit,
   PLATFORM_ID,
   computed,
+  inject,
   signal,
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
@@ -13,22 +12,8 @@ import {
   OFF_THE_RECORD,
   OFF_THE_RECORD_TOTALS,
   SPRINT_ENTRIES,
-  SprintEntry,
   ZOOMED_OUT,
 } from './sprint-entry.model';
-
-interface RenderedEntry extends SprintEntry {
-  /** Final image src — starts at staticPreview (or live screenshot), can upgrade. */
-  preview: string | null;
-  /** True for cards under the same chapter sub-header — used to draw the shared rule. */
-  groupHead: boolean;
-  /** True for the second/third card sharing a chapter sub-header. */
-  groupedFollower: boolean;
-  /** Cached short host for the browser-chrome address bar */
-  shortUrl: string;
-  /** Cached short host/path for the repo link */
-  shortRepo: string;
-}
 
 @Component({
   selector: 'app-one-week',
@@ -1401,25 +1386,26 @@ interface RenderedEntry extends SprintEntry {
     }
   `],
 })
-export class OneWeekComponent implements OnInit {
-  private readonly entries = signal<RenderedEntry[]>([]);
+export class OneWeekComponent {
+  /**
+   * Each entry is a sprint entry plus render-only fields:
+   * preview (image src), groupHead / groupedFollower (chapter grouping),
+   * shortUrl and shortRepo (cached display strings).
+   */
+  entries = signal([]);
   rendered = computed(() => this.entries());
 
-  readonly offRecord = OFF_THE_RECORD;
-  readonly totals = OFF_THE_RECORD_TOTALS;
-  readonly zoom = ZOOMED_OUT;
+  offRecord = OFF_THE_RECORD;
+  totals = OFF_THE_RECORD_TOTALS;
+  zoom = ZOOMED_OUT;
 
-  private readonly isBrowser: boolean;
+  isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
-  constructor(@Inject(PLATFORM_ID) platformId: object) {
-    this.isBrowser = isPlatformBrowser(platformId);
-  }
-
-  ngOnInit(): void {
+  ngOnInit() {
     // Compute group flags so the template knows which card sits at the head
     // of a same-day cluster, and which ones are followers.
-    const seenChapters = new Set<string>();
-    const initial: RenderedEntry[] = SPRINT_ENTRIES.map((e) => {
+    const seenChapters = new Set();
+    const initial = SPRINT_ENTRIES.map((e) => {
       const isHead = !!e.chapter && !seenChapters.has(e.chapter);
       if (e.chapter) seenChapters.add(e.chapter);
       const groupedFollower = !!e.chapter && !isHead;
@@ -1458,11 +1444,11 @@ export class OneWeekComponent implements OnInit {
     });
   }
 
-  pad(n: number): string {
+  pad(n) {
     return n.toString().padStart(2, '0');
   }
 
-  private shortHost(url?: string): string {
+  shortHost(url) {
     if (!url) return '';
     try {
       return new URL(url).host.replace(/^www\./, '');
@@ -1471,7 +1457,7 @@ export class OneWeekComponent implements OnInit {
     }
   }
 
-  private shortRepoPath(url?: string): string {
+  shortRepoPath(url) {
     if (!url) return '';
     try {
       const u = new URL(url);

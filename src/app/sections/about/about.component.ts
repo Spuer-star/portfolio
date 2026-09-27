@@ -332,14 +332,14 @@ import { RouterLink } from '@angular/router';
   `,
 })
 export class AboutComponent {
-  readonly stats = [
+  stats = [
     { value: '9', label: 'Years in software' },
     { value: '3', label: 'AI platforms shipped' },
     { value: '8', label: 'Production projects' },
     { value: 'AD', label: 'Associate Director' },
   ];
 
-  pad(n: number): string {
+  pad(n) {
     return n.toString().padStart(2, '0');
   }
 }

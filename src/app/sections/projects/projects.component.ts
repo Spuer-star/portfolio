@@ -1,18 +1,7 @@
 import { Component, computed, signal } from '@angular/core';
-import {
-  CATEGORY_LABELS,
-  PROJECTS,
-  ProjectCategory,
-} from '../../core/models/project.model';
+import { CATEGORY_LABELS, PROJECTS } from '../../core/models/project.model';
 import { RouterLink } from '@angular/router';
 import { ProjectCardComponent } from './project-card/project-card.component';
-
-type FilterValue = ProjectCategory | 'all';
-
-interface FilterChip {
-  value: FilterValue;
-  label: string;
-}
 
 @Component({
   selector: 'app-projects',
@@ -368,23 +357,23 @@ interface FilterChip {
   `],
 })
 export class ProjectsComponent {
-  readonly totalCount = PROJECTS.length;
+  totalCount = PROJECTS.length;
 
   /** Only show category chips that actually have at least one project. */
-  readonly filterChips: FilterChip[] = (() => {
+  filterChips = (() => {
     const usedCategories = new Set(PROJECTS.map((p) => p.category));
     return [
-      { value: 'all' as FilterValue, label: 'ALL' },
+      { value: 'all', label: 'ALL' },
       ...Object.entries(CATEGORY_LABELS)
-        .filter(([value]) => usedCategories.has(value as ProjectCategory))
+        .filter(([value]) => usedCategories.has(value))
         .map(([value, label]) => ({
-          value: value as ProjectCategory,
+          value,
           label: label.toUpperCase(),
         })),
     ];
   })();
 
-  activeFilter = signal<FilterValue>('all');
+  activeFilter = signal('all');
 
   filteredProjects = computed(() => {
     const filter = this.activeFilter();
