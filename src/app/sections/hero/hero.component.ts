@@ -27,17 +27,17 @@ import { CardOracleComponent } from '../card-oracle/card-oracle.component';
           </div>
           <div class="margin-meta">
             <span class="meta-label">discipline</span>
-            <span class="meta-value">full-stack · fintech · ai</span>
+            <span class="meta-value">search · data · cloud</span>
           </div>
           <div class="margin-meta">
             <span class="meta-label">years shipping</span>
-            <span class="meta-value">nine</span>
+            <span class="meta-value">thirteen</span>
           </div>
         </aside>
 
         <!-- Center: title -->
         <div class="title-block">
-          <p class="eyebrow">senior full-stack engineer · fintech · ai</p>
+          <p class="eyebrow">staff software engineer · search · ai</p>
           <h1 class="display-name">
             <span class="given">Akira</span>
             <span class="surname">Eloman<em class="period">.</em></span>
@@ -50,12 +50,12 @@ import { CardOracleComponent } from '../card-oracle/card-oracle.component';
           <div class="abstract-rule"><span>OPEN TO WORK</span></div>
 
           <p class="abstract">
-            <em>Senior, staff or principal</em> full-stack roles —
-            Fully remote, comfortable working across time zones.
-            Nine years in fintech and banking. Most recently
-            <em>Associate Director at UBS</em>, on the receiving side of the
-            UBS / Credit Suisse merger. Three AI products shipped
-            <em>solo in six months</em>. Permanent or contract.
+            <em>Staff, principal or lead</em> engineering roles —
+            fully remote, comfortable working across time zones.
+            Thirteen years building search and data systems across
+            finance, telecom, and healthcare. Most recently
+            <em>Senior Search Architect at PNC</em>, running OpenSearch
+            on AWS. Permanent or contract.
           </p>
 
           <div class="cta-row">

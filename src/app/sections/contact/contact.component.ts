@@ -15,8 +15,8 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
             <em>Get in</em> Touch
           </h2>
           <p class="archive-subtitle">
-            Open to <em>senior, staff or principal</em> full-stack roles —
-            Fully remote, comfortable working across time zones.
+            Open to <em>staff, principal or lead</em> engineering roles —
+            fully remote, comfortable working across time zones.
             <em>Permanent or contract.</em>
             Email is the fastest route; every message is read.
           </p>

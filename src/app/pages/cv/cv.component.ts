@@ -28,7 +28,7 @@ import { RouterLink } from '@angular/router';
             <em>The</em> Author<span class="period">.</span>
           </h1>
           <p class="cv-subtitle">
-            Akira Eloman <span class="sep">·</span> <em>Full-stack engineer</em>
+            Akira Eloman <span class="sep">·</span> <em>Staff software engineer</em>
             <span class="sep">·</span> Remote
           </p>
         </header>
@@ -40,17 +40,16 @@ import { RouterLink } from '@angular/router';
             <span class="meta-label">statement</span>
           </div>
           <p class="statement">
-            <em>N</em>ine years in software, all within
-            <strong>fintech and banking</strong>. Associate Director at
-            twenty-seven. Learned not just how to write software but how
-            to communicate ideas, formalise processes, and drive delivery
-            across distributed teams. When AI emerged, it reignited a
-            passion for building. I've shipped
-            <strong>three AI-powered platforms solo</strong> in six months
-            — all live, all generating revenue. Combined with deep
-            enterprise experience and architectural thinking, I build
-            software that's both
-            <strong>technically sound and commercially real</strong>.
+            <em>S</em>easoned staff software engineer with
+            <strong>thirteen years of experience</strong>, specialising in
+            designing and implementing robust search solutions for
+            healthcare and financial systems. Proficient in
+            <strong>Elasticsearch / OpenSearch</strong>, indexing strategies,
+            and relevance tuning — enhancing data retrieval accuracy by 28%.
+            Adept at bridging product requirements with technical
+            architecture, demonstrated by
+            <strong>reducing zero-result rates by 15%</strong> in health
+            tech environments.
           </p>
         </section>
 
@@ -76,8 +75,6 @@ import { RouterLink } from '@angular/router';
                       <em>at</em> {{ role.company }}
                     </p>
                     <div class="role-meta">
-                      <span class="role-loc">{{ role.location }}</span>
-                      <span class="dot">·</span>
                       <span class="role-period">{{ role.period }}</span>
                     </div>
                   </header>
@@ -100,10 +97,34 @@ import { RouterLink } from '@angular/router';
           </ol>
         </section>
 
+        <!-- Skills -->
+        <section class="section-block">
+          <div class="section-rule">
+            <span class="rule-tag">CHAPTER TWO — CRAFT</span>
+          </div>
+          <h2 class="section-title">Skills</h2>
+
+          <div class="skills-grid">
+            @for (group of skillGroups; track group.name; let g = $index) {
+              <div class="skill-block">
+                <div class="skill-heading">
+                  <span class="meta-num">{{ romans[g] }}.</span>
+                  <span class="meta-label">{{ group.name }}</span>
+                </div>
+                <ul class="skill-pills">
+                  @for (skill of group.skills; track skill) {
+                    <li class="pill">{{ skill }}</li>
+                  }
+                </ul>
+              </div>
+            }
+          </div>
+        </section>
+
         <!-- Selected Works callout -->
         <section class="section-block">
           <div class="section-rule">
-            <span class="rule-tag">CHAPTER TWO — SELECTED WORKS</span>
+            <span class="rule-tag">CHAPTER THREE — SELECTED WORKS</span>
           </div>
           <h2 class="section-title">Recent Builds</h2>
 
@@ -120,16 +141,16 @@ import { RouterLink } from '@angular/router';
         <!-- Education -->
         <section class="section-block">
           <div class="section-rule">
-            <span class="rule-tag">CHAPTER THREE — STUDIES</span>
+            <span class="rule-tag">CHAPTER FOUR — STUDIES</span>
           </div>
           <h2 class="section-title">Education</h2>
 
           <div class="education">
-            <span class="degree">BSc Computer Science</span>
+            <span class="degree">Master of Computer Science</span>
             <span class="university">
-              <em>Newcastle University</em>
+              <em>University of North Texas</em>
               <span class="dot">·</span>
-              MMXIV — MMXVII
+              MMXV — MMXVIII
             </span>
           </div>
         </section>
@@ -137,7 +158,7 @@ import { RouterLink } from '@angular/router';
         <!-- Languages -->
         <section class="section-block">
           <div class="section-rule">
-            <span class="rule-tag">CHAPTER FOUR — TONGUES</span>
+            <span class="rule-tag">CHAPTER FIVE — TONGUES</span>
           </div>
           <h2 class="section-title">Languages</h2>
 
@@ -794,81 +815,144 @@ export class CvComponent {
     return n.toString().padStart(2, '0');
   }
 
+  romans = ['i', 'ii', 'iii', 'iv', 'v', 'vi'];
+
   roles = [
     {
-      title: 'Associate Director',
-      company: 'UBS',
-      location: 'Zurich, Switzerland',
-      period: 'Jun 2024 – Jul 2025',
-      context:
-        'UBS acquired Credit Suisse in the largest Swiss banking merger in history. Tasked with consolidating two wealth management platforms — Credit Suisse\'s Angular stack onto UBS\'s React stack — and rolling out to EMEA.',
+      title: 'Senior Search Architect',
+      company: 'PNC',
+      period: 'Oct 2023 – Present',
+      context: '',
       bullets: [
-        'Led full-stack Java 17 / React development on UBS\'s wealth platform — the receiving side of the largest banking integration in Swiss history',
-        'Drove the Angular-to-React migration of Credit Suisse features into the UBS platform — translating components, state, and integration patterns across two very different frameworks',
-        'Delivered and deployed the consolidated application to Spain, Italy, and UK clients across three EMEA regions',
-        'Authored architectural design documents for system changes and improvements — formalising technical decisions for stakeholder sign-off',
-        'Designed the entire technical hiring process from scratch — pair programming exercises, assessment criteria — and hired three developers',
-        'Drove cross-functional communication between business stakeholders and distributed engineering teams',
+        'Spearheaded the design and management of OpenSearch clusters, improving data indexing speed by 35%',
+        'Developed and maintained search APIs to enhance data querying across financial products',
+        'Implemented relevance tuning algorithms, achieving a 20% increase in user satisfaction scores',
+        'Led the migration of search architecture to AWS, optimizing cluster performance and reducing operational costs by 18%',
+        'Collaborated with cross-functional teams to design search solutions for new financial services verticals',
+        'Created custom dashboards for search performance analytics using OpenSearch Dashboards and custom tools',
+        'Authored technical design documents and RFCs to set direction for future search enhancements',
+        'Mentored junior engineers on search system best practices and optimization techniques',
+        'Managed incident response for search-related issues, improving resolution times by 30%',
+        'Utilized Claude Code to automate relevance judgment and indexing tasks, enhancing efficiency by 25%',
       ],
     },
     {
-      title: 'Assistant Vice President',
-      company: 'Credit Suisse',
-      location: 'Zurich, Switzerland',
-      period: 'Feb 2023 – Jun 2024',
+      title: 'Lead Software Engineer',
+      company: 'T-Mobile',
+      period: 'Jul 2022 – Sep 2023',
       context: '',
       bullets: [
-        'Sole backend developer for the Zurich wealth management team — led the monolith-to-microservices migration single-handedly',
-        'Full-stack Angular / Java delivery with complete ownership: requirements, design, implementation, testing, deployment',
-        'Built and enforced development standards across internationally distributed teams',
-        'Ran Java workshops and knowledge-sharing sessions to upskill team members across multiple offices',
+        'Engaged with executive stakeholders, translating technical search components into business outcomes',
+        'Led enhancements to Elasticsearch clusters, improving search relevance for customer support tools by 30%',
+        'Orchestrated a seamless upgrade from Elasticsearch to OpenSearch, reducing query costs by 12%',
+        'Streamlined ingestion pipelines for real-time index updates, cutting data freshness lag by 40%',
+        'Partnered with telemetry teams to elevate search observability using custom logging frameworks',
+        'Authored training materials on search technologies, facilitating team-wide educational workshops',
+        'Drove innovations in search API architecture, enabling scalable data access across platforms',
+        'Optimized typo tolerance and query parsing, raising search fallback success by 16%',
+        'Piloted LLM-based semantic search experiments, balancing with traditional retrieval methods',
+        'Developed synonymous term handling systems to elevate user search experience',
+        'Integrated geo-aware ranking algorithms, enhancing regional data retrieval precision',
+        'Managed incident analysis for search, achieving root-cause resolution within established SLOs',
       ],
     },
     {
-      title: 'Frontend Development Consultant · Backbase Specialist',
-      company: 'Credit Suisse (Contract)',
-      location: 'Zurich, Switzerland',
-      period: 'Aug 2020 – Feb 2023',
+      title: 'Search Technology Specialist',
+      company: 'UCSF Health',
+      period: 'Apr 2020 – Jun 2022',
       context: '',
       bullets: [
-        'Brought in as a Backbase platform specialist after my time at Backbase HQ — extended and customised the Backbase wealth-management widgets for Credit Suisse advisors',
-        'Architected Angular 12 micro frontends on top of the Backbase orchestration layer — adopted across multiple business units as the standard component library for the wealth platform',
-        'Led and mentored distributed international teams; set the bar for frontend quality and consistency',
-      ],
-    },
-    {
-      title: 'Junior Full Stack Developer',
-      company: 'Backbase',
-      location: 'Cardiff, UK',
-      period: 'Jan 2019 – Aug 2020',
-      context: '',
-      bullets: [
-        "Company's first full-stack developer. Built the reusable micro frontend library used across all credit union and banking clients (Angular, Java 8)",
-        'Owned the security layer: SMS OTP, device out-of-band authentication, Keycloak integration — shipped to production across multiple financial institutions',
+        'Overhauled the search architecture for medical record systems using Elasticsearch, improving clinician data access speed by 20%',
+        'Enhanced search relevance by deploying ML models for personalized result rankings',
+        'Implemented geo-aware searches, greatly improving local data retrieval for patients and providers',
+        'Launched new search indexing pipelines that cut data refresh times by 50%',
+        'Developed internal search dashboards, enabling better oversight on query success and data accuracy',
+        'Collaborated on search anomaly detection tools, reducing data inconsistency occurrences by 23%',
+        'Designed and executed scalability plans for search systems to accommodate expanded clinical operations',
+        'Engaged in cross-functional solution exploration for advanced search functionalities',
+        'Increased medical record retrieval accuracy through enhanced query parsing and synonyms handling',
+        'Defined and tracked KPIs for search efficiency, guiding performance optimizations',
+        'Directed technical workshops and seminars for staff on search system improvements',
       ],
     },
     {
       title: 'Software Engineer',
-      company: 'Smartstream Technologies',
-      location: 'Bristol, UK',
-      period: 'Jun 2017 – Aug 2018',
+      company: 'Principal Financial Group',
+      period: 'Jan 2018 – Mar 2020',
       context: '',
       bullets: [
-        'Promoted from Junior to Software Engineer within 6 months. Java microservices, full lifecycle ownership, and Scrum-master responsibilities on a 2-year graduate programme',
+        'Engineered custom search solutions within financial trading platforms, optimizing index queries by 40%',
+        'Integrated dynamic boosting algorithms for enhancing search results precision in trading applications',
+        'Advanced cross-platform query capabilities, significantly increasing search throughput',
+        'Instrumented ingestion pipelines that improved data processing efficiency by 27%',
+        'Crafted search data replication strategies, minimizing downtime during peak trading hours',
+        'Coordinated with multiple departments to refine search UX/UI, elevating user satisfaction metrics',
+        'Pioneered fault-tolerant search architecture, improving service resilience under load',
+        'Participated in regular knowledge-sharing sessions, promoting engineering best practices',
+        'Maintained rigorous documentation and technical guides for search process optimization',
+        'Implemented automated alerting for search anomalies, improving response to inconsistencies',
+        'Developed strategies for upgrading search infrastructure with minimal disruption',
       ],
     },
     {
-      title: 'Crew Member',
-      company: "McDonald's",
-      location: 'United Kingdom',
-      period: '2013 – 2015',
+      title: 'Junior Software Engineer',
+      company: 'Wissen Technology',
+      period: 'May 2013 – Oct 2015',
       context: '',
       bullets: [
-        'First job. Front of house, kitchen, drive-thru — worked every station on rotating shifts through sixth form',
-        'Learned how to keep my head when the queue is out the door — composure under pressure, fast hands, fast decisions',
-        'Picked up the muscle memory for showing up, doing the work, and looking after teammates',
+        'Assisted in the development of search algorithms for data retrieval systems, enhancing search throughput by 15%',
+        'Collaborated on the initial implementation of Elasticsearch across new projects',
+        'Participated in developing small-scale data pipeline solutions for ETL processes',
+        'Supported the integration of search features into client-facing applications, increasing usability',
+        'Assisted in troubleshooting and debugging Elasticsearch configurations to ensure high availability',
+        'Contributed to the design and execution of user query interfaces for improved interaction',
+        'Involved in basic performance monitoring strategies and adjustments for search systems',
+        'Documented best practices and technical strategies for search development teams',
+        'Gained insights into search indexing methodologies and practical optimizations',
+        'Regularly updated team progress in weekly technical meetings to coordinate efforts',
+        'Provided technical assistance in upgrading legacy systems to newer search technologies',
       ],
-      early: true,
+    },
+  ];
+
+  skillGroups = [
+    {
+      name: 'Programming Languages',
+      skills: ['Python', 'JavaScript', 'Java', 'C++', 'Ruby', 'SQL'],
+    },
+    {
+      name: 'Frameworks & Libraries',
+      skills: ['React', 'Next.js', 'GraphQL', 'Elasticsearch', 'OpenSearch', 'TensorFlow'],
+    },
+    {
+      name: 'Cloud & DevOps',
+      skills: ['AWS', 'Docker', 'Kubernetes', 'Jenkins', 'Git CI/CD', 'Linux'],
+    },
+    {
+      name: 'Databases & Data',
+      skills: ['PostgreSQL', 'MySQL', 'Neo4j', 'MongoDB', 'Apache Kafka', 'Redis'],
+    },
+    {
+      name: 'Tools & Platforms',
+      skills: [
+        'Claude Code',
+        'OpenSearch Dashboards',
+        'Custom Relevance Tooling',
+        'Search Analytics',
+        'Index Management',
+        'Observability',
+      ],
+    },
+    {
+      name: 'Soft Skills',
+      skills: [
+        'Cross-functional collaboration',
+        'Stakeholder communication',
+        'Technical mentorship',
+        'Problem-solving',
+        'Adaptability',
+        'Resourcefulness',
+      ],
     },
   ];
 

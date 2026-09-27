@@ -22,19 +22,19 @@ import { RouterLink } from '@angular/router';
           <!-- Left: Bio -->
           <article class="bio">
             <p class="bio-p">
-              Nine years in software, all within
-              <span class="emph">fintech and banking</span>.
-              Associate Director at twenty-seven. Learned not just how to
-              write software, but how to communicate ideas, formalise
-              processes, and drive delivery across distributed teams.
+              Thirteen years in software, specialising in
+              <span class="emph">search systems</span> for finance, telecom,
+              and healthcare. Deep in Elasticsearch and OpenSearch —
+              indexing strategies, relevance tuning, and ingestion pipelines
+              — with a track record of raising data retrieval accuracy by 28%.
             </p>
             <p class="bio-p">
-              When AI emerged, it reignited a passion for building. I've
-              shipped <span class="emph">three AI-powered platforms solo</span>
-              in six months — all live, all generating revenue. Combined with
-              deep enterprise experience and architectural thinking, I build
-              software that's both <span class="emph">technically sound and
-              commercially real</span>.
+              I bridge product requirements and technical architecture:
+              cutting zero-result rates, migrating search platforms to the
+              cloud, and piloting <span class="emph">LLM-based semantic
+              search</span> alongside traditional retrieval. Master's in
+              Computer Science from the
+              <span class="emph">University of North Texas</span>.
             </p>
             <a class="cv-link" routerLink="/cv">
               <span class="visit-arrow">→</span>
@@ -333,10 +333,10 @@ import { RouterLink } from '@angular/router';
 })
 export class AboutComponent {
   stats = [
-    { value: '9', label: 'Years in software' },
-    { value: '3', label: 'AI platforms shipped' },
-    { value: '8', label: 'Production projects' },
-    { value: 'AD', label: 'Associate Director' },
+    { value: '13', label: 'Years in software' },
+    { value: '5', label: 'Companies' },
+    { value: '5', label: 'Certifications' },
+    { value: 'MS', label: 'Computer Science' },
   ];
 
   pad(n) {
