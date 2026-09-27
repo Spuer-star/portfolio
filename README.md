@@ -1,12 +1,4 @@
-# coreyscodecave.com
 
-Source for **[coreyscodecave.com](https://www.coreyscodecave.com/)** — a personal site by a senior full-stack engineer (Zürich · fintech · AI).
-
-> **Open to work** — Senior, Staff or Principal full-stack roles · Zürich on-site / hybrid or fully remote across EU time zones · permanent or contract.
-> Fastest route in: **[coreymusa@outlook.com](mailto:coreymusa@outlook.com)**.
-> See also: **[github.com/coeymusa](https://github.com/coeymusa)** · **[linkedin.com/in/corey-musa](https://www.linkedin.com/in/corey-musa/)**.
-
----
 
 ## About the site
 
